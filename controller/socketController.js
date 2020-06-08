@@ -1,12 +1,3 @@
-var fs = require('fs');
-var config = require('../config/config');
-var request = require('request');
-
-var url = config.IP_URL;  // IP 명단 URL
-var access_ip = null;  // IP 명단 목록
-
-var fileWatch;  // 파일 검사 변수
-
 // LOG
 var logger = require('../config/log');
 
