@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1><%= title %> System 2.0</h1>
+    <div class="count"></div>
+    <div class="title"></div>
+    <br>
+    <div class="">
+      <div class="layout" style="height:300px; overflow:auto">
+        <div class="chat">
+        </div>
+      </div>
+      <br>
+      <div class="">
+        <span>입력 : </span>
+        <input type="text" name="msg" value="" style="width:500px;">
+        <button type="submit" name="button">전송</button>
+        <input type="hidden" class="name" name="name" value="">
+      </div>
+    </div>
+  </body>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/socket.io-client@2/dist/socket.io.js" charset="utf-8"></script>
+
+  <script type="text/javascript">
+    var temp_name = ['Apple', 'Banana', 'Cherry', 'Dog', 'Elly', 'Fxxx', 'God'];
+
+    var ran = Math.floor(Math.random() * 7);
+    var name = temp_name[ran];
+    $(".name").val(name);
+    $(".title").html(name+"님 환영합니다~");
+
+
+    // Socket Connect
+    socket = io.connect("jghee717.cafe24.com:3100");
+
+    socket.io.on("connect_error", function(error) {
+       socket.disconnect();
+       console.log("Socket can't connect to server!");
+    });
+
+    socket.on("connect", function(ee){
+        console.log("Socket connect!");
+    });
+
+
+    socket.emit("user", {data: name });
+
+
+    socket.on('count', function (data) {
+        $(".count").html("접속자 수 : "+data.data);
+    });
+
+    socket.on('recv_msg', function (data) {
+        console.log("recv");
+        $(".chat").append("<div>"+data.data+"</div>");
+        move_page();
+    });
+
+    $("button").click(function(){
+      send_msg();
+    })
+
+    $('input[name=msg]').keypress(function(event){
+       if ( event.which == 13 ) {
+         send_msg();
+       }
+    });
+
+    function send_msg() {
+      var val = $('input[name=msg]').val();
+
+      socket.emit("send_msg", {
+        data: val,
+        name: name
+      });
+
+      $('input[name=msg]').val("");
+      $(".chat").append("<div style='color:blue'>"+name+" : "+val+"</div>");
+      move_page();
+    }
+
+    function move_page(){
+      var height = $('.chat').height();
+      $( '.layout' ).scrollTop(height);
+    }
+  </script>
+
+</html>
