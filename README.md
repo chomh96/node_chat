@@ -1,2 +1,3 @@
-# node_chat
-Chatting ( Node js + Socket.io )
+# Chatting
+Chatting by all users
+Node js + Express + Socket.io
